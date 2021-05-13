@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:lee="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="XML里实现"
+        android:textSize="15sp"/>
+
+    <TextSwitcher
+        android:id="@+id/textSwitcher1"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inAnimation="@anim/slide_in_bottom"
+        android:outAnimation="@anim/slide_out_top" />
+
+    <TextView
+        android:text="自定义TextSwitcher实现"
+        android:textSize="15sp"
+        android:textColor="@color/colorPrimary"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <com.myfittinglife.verticalscrolltextswitcher.MyTextSwitcher
+        android:id="@+id/mTextSwitcher"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        lee:animDirection="top2bottom"
+        lee:ellipsize="end"
+        lee:maxLines="2"
+        lee:textColor="@color/colorPrimary"
+        lee:textSize="20sp"
+        lee:textStyle="normal" />
+
+    <Button
+        android:id="@+id/btnStart"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="开始滚动" />
+
+    <Button
+        android:id="@+id/btnStop"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="停止滚动" />
+
+</LinearLayout>
