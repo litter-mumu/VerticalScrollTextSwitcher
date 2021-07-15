@@ -7,6 +7,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.text.TextUtils
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.view.View
 import android.view.animation.Animation
@@ -29,6 +30,7 @@ class MyTextSwitcher(private val mContext: Context, attributeSet: AttributeSet? 
 
     private var textSize: Float
     private var textColor: Int
+
     //最多显示的行数
     private var maxlines: Int
     private var ellipse: String?
@@ -38,6 +40,8 @@ class MyTextSwitcher(private val mContext: Context, attributeSet: AttributeSet? 
     private val dataList = mutableListOf<String>()
     private var timer: Timer? = null
     private var num = 0
+    //如果想要循环的变换文字颜色的话加上这个集合
+    private val colorList = mutableListOf<Int>()
 
     //用来判断是否开始滚动，防止重复滚动(timer执行多次schedule造成滚动的文字顺序混乱)
     private var isStart = false
@@ -80,6 +84,7 @@ class MyTextSwitcher(private val mContext: Context, attributeSet: AttributeSet? 
     }
 
     override fun makeView(): View {
+        Log.i("ceshi", "makeView: ")
         val textView = TextView(mContext)
 
         when (ellipse) {
@@ -104,12 +109,12 @@ class MyTextSwitcher(private val mContext: Context, attributeSet: AttributeSet? 
                 textView.typeface = Typeface.defaultFromStyle(Typeface.ITALIC)
             }
         }
-        if(maxlines>0){
+        if (maxlines > 0) {
             textView.maxLines = maxlines
         }
         //这里不能直接写textSize，setTextSize()方法默认是按sp值设置进去的。二者的单位不同，所以最后的结果会偏差很大
 //        textView.textSize = textSize
-        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX,textSize)
+        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize)
 
         textView.setTextColor(textColor)
         textView.layoutParams = FrameLayout.LayoutParams(
@@ -153,6 +158,7 @@ class MyTextSwitcher(private val mContext: Context, attributeSet: AttributeSet? 
             Animation.RELATIVE_TO_PARENT, 1f
         )
     }
+
     /**
      * 具体创建动画的方法
      */
@@ -221,6 +227,16 @@ class MyTextSwitcher(private val mContext: Context, attributeSet: AttributeSet? 
     }
 
     /**
+     * 如果想要循环的变换字体颜色的话增加这个方法
+      */
+    fun setColorList(theData: List<Int>){
+        //防止滚动过程中处理数据发生异常
+        stopScroll()
+
+        colorList.clear()
+        colorList.addAll(theData)
+    }
+    /**
      * 开始滚动
      * intervalTime：每隔多少秒滚动一次，可以不填写，默认是2秒切换一次，
      * todo 如何防止重复开启滚动
@@ -229,13 +245,15 @@ class MyTextSwitcher(private val mContext: Context, attributeSet: AttributeSet? 
         if (timer == null) {
             timer = Timer()
         }
-        if(!isStart){
+        if (!isStart) {
             timer?.schedule(object : TimerTask() {
                 override fun run() {
                     num++
                     (mContext as Activity).runOnUiThread {
                         if (dataList.size > 0) {
                             setText(dataList[num % dataList.size])
+//                            如果想要循环更改颜色的话使用这个
+//                            setText(dataList[num % dataList.size], colorList[num % colorList.size])
                         }
                     }
                 }
@@ -253,9 +271,20 @@ class MyTextSwitcher(private val mContext: Context, attributeSet: AttributeSet? 
         timer = null
         isStart = false
     }
+
     private fun px2sp(context: Context, px: Int): Float {
         var fontScale = context.resources.displayMetrics.scaledDensity
         return (px / fontScale + 0.5).toFloat()
+    }
+
+    /**
+     * 重写setText()方法，使得其可以循环的更改文字颜色
+     */
+    fun setText(text: CharSequence?, textColor: Int) {
+        val t = nextView as TextView
+        t.text = text
+        t.setTextColor(resources.getColor(textColor))
+        showNext()
     }
 
 

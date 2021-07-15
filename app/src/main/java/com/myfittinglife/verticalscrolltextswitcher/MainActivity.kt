@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity() {
             //XML的TextViewSwitcher的控制
             timer?.cancel()
             timer = null
-            
+
             //自定义TextSwitcher的控制
             mTextSwitcher.stopScroll()
         }
